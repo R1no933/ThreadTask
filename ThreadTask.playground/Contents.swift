@@ -1,64 +1,95 @@
 import UIKit
 
-var stash = Stash()
-
-class Generator: Thread {
-    var count: Int = 0
-    
-    override func main() {
-        while count != 20 {
-            getChip()
-            print("Чип сгенерирован и добавлен на склад")
-            count += 2
-            Thread.sleep(forTimeInterval: 2)
-        }
-    }
-    
-    func getChip() {
-        stash.pushChip(chip: Chip.make())
-    }
-}
-
+//Working thread
 class Work: Thread {
+    private var stash: Stash
+    
+    init(stash: Stash) {
+        self.stash = stash
+    }
+    
     override func main() {
-        while !stash.isEmpty() {
-            guard let chip = stash.popChip() else { return }
-            print("Чип типа \(chip.chipType) запаян.")
-            chip.sodering()
+        while stash.count > 0 || !work.isCancelled {
+            working()
         }
+        
+        cancel()
+        print("Работающий поток закончен")
+    }
+    
+    private func working() {
+        guard let chip = stash.popChip() else { return }
+        soldering(chip: chip)
+    }
+    
+    private func soldering(chip: Chip) {
+        chip.sodering()
+        print("Чип типа \(chip.chipType) припаян. Остаток: \(stash.getAllChips())")
     }
 }
 
+// Chip Generator thread
+class Generator: Thread {
+    private var stash: Stash
+    private var count: Int
+    private var interval: Double
+    
+    init(stash: Stash, count: Int = 5, interval: Double = 2.0) {
+        self.stash = stash
+        self.count = count
+        self.interval = interval
+    }
+    
+    override func main() {
+        for _ in 1...count {
+            let chip = createChip()
+            stash.pushChip(chip: chip)
+            Thread.sleep(forTimeInterval: interval)
+        }
+        cancel()
+        print("Генерирующий поток закончен")
+    }
+    
+    private func createChip() -> Chip {
+        let chip = Chip.make()
+        print("Чип типа \(chip.chipType) создан. Остаток: \(stash.getAllChips())")
+        return chip
+    }
+}
+
+//Stash class
 class Stash {
-    var chipArray: [Chip] = []
-    var queue: DispatchQueue = DispatchQueue(label: "syncQueue", attributes: .concurrent)
+    private var chipArray: [Chip] = []
+    private var queue: DispatchQueue = DispatchQueue(label: "syncQueue", qos: .utility, attributes: .concurrent)
+    var count: Int { chipArray.count }
     
     func pushChip(chip: Chip) {
-        self.queue.async(flags: .barrier) {
+        queue.async(flags: .barrier) { [unowned self] in
             self.chipArray.append(chip)
+            print("Чип типа \(chip.chipType) на обработке. Остаток: \(getAllChips())")
         }
     }
     
     func popChip() -> Chip? {
         var chip: Chip?
-        self.queue.async(flags: .barrier) {
-            chip = self.chipArray.removeFirst()
+        queue.sync { [unowned self] in
+            guard let poppedChip = self.chipArray.popLast() else { return }
+            chip = poppedChip
+            print("Чип типа \(poppedChip.chipType) подготовлен. Остаток: \(getAllChips())")
         }
         
         return chip
     }
     
-    func isEmpty() -> Bool {
-        self.queue.sync {
-            return self.chipArray.isEmpty
-        }
+    func getAllChips() -> [UInt32] {
+        chipArray.compactMap { $0.chipType.rawValue }
     }
 }
 
-if true {
-    //let generator = Generator()
-    //generator.start()
-    
-    let work = Work()
-    work.start()
-}
+let stash = Stash()
+let generator = Generator(stash: stash, interval: 1.0)
+let work = Work(stash: stash)
+
+generator.start()
+work.start()
+
