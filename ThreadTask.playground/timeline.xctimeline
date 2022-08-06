@@ -3,12 +3,7 @@
    version = "3.0">
    <TimelineItems>
       <LoggerValueHistoryTimelineItem
-         documentLocation = "file:///Users/dmitriybaskakov/Documents/GitHub/ThreadTask/ThreadTask.playground#CharacterRangeLen=45&amp;CharacterRangeLoc=2231&amp;EndingColumnNumber=0&amp;EndingLineNumber=85&amp;StartingColumnNumber=9&amp;StartingLineNumber=84&amp;Timestamp=681323139.537753"
-         selectedRepresentationIndex = "0"
-         shouldTrackSuperviewWidth = "NO">
-      </LoggerValueHistoryTimelineItem>
-      <LoggerValueHistoryTimelineItem
-         documentLocation = "file:///Users/dmitriybaskakov/Documents/GitHub/ThreadTask/ThreadTask.playground#CharacterRangeLen=9&amp;CharacterRangeLoc=436&amp;EndingColumnNumber=18&amp;EndingLineNumber=21&amp;StartingColumnNumber=9&amp;StartingLineNumber=21&amp;Timestamp=681323139.537915"
+         documentLocation = "file:///Users/dmitriybaskakov/Documents/GitHub/ThreadTask/ThreadTask.playground#CharacterRangeLen=364&amp;CharacterRangeLoc=342&amp;EndingColumnNumber=9&amp;EndingLineNumber=27&amp;StartingColumnNumber=28&amp;StartingLineNumber=17&amp;Timestamp=681490564.967627"
          lockedSize = "{272, 128}"
          selectedRepresentationIndex = "0"
          shouldTrackSuperviewWidth = "NO">

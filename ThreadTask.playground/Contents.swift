@@ -3,28 +3,29 @@ import UIKit
 //Working thread
 class Work: Thread {
     private var stash: Stash
+    private var count: Int
     
-    init(stash: Stash) {
+    init(stash: Stash, count: Int) {
         self.stash = stash
+        self.count = count
     }
     
     override func main() {
-        while stash.count > 0 || !work.isCancelled {
-            working()
-        }
-        
-        cancel()
+        working()
         print("Работающий поток закончен")
     }
     
     private func working() {
-        guard let chip = stash.popChip() else { return }
-        soldering(chip: chip)
-    }
-    
-    private func soldering(chip: Chip) {
-        chip.sodering()
-        print("Чип типа \(chip.chipType) припаян. Остаток: \(stash.getAllChips())")
+        while count != 0 {
+            if stash.chipArray.isEmpty == false {
+                count += 1
+                stash.chipArray.last?.sodering()
+                print("Чип припаян.")
+                stash.chipArray.removeLast()
+                print("Чип удален из стека.")
+                print("Остаток: \(stash.getAllChips()).")
+            }
+        }
     }
 }
 
@@ -34,7 +35,7 @@ class Generator: Thread {
     private var count: Int
     private var interval: Double
     
-    init(stash: Stash, count: Int = 5, interval: Double = 2.0) {
+    init(stash: Stash, count: Int, interval: Double) {
         self.stash = stash
         self.count = count
         self.interval = interval
@@ -59,7 +60,7 @@ class Generator: Thread {
 
 //Stash class
 class Stash {
-    private var chipArray: [Chip] = []
+    var chipArray: [Chip] = []
     private var queue: DispatchQueue = DispatchQueue(label: "syncQueue", qos: .utility, attributes: .concurrent)
     var count: Int { chipArray.count }
     
@@ -87,9 +88,8 @@ class Stash {
 }
 
 let stash = Stash()
-let generator = Generator(stash: stash, interval: 1.0)
-let work = Work(stash: stash)
+let generator = Generator(stash: stash, count: 5, interval: 2.0)
+let work = Work(stash: stash, count: 5)
 
 generator.start()
 work.start()
-
