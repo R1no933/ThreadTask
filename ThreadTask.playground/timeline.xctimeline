@@ -2,5 +2,11 @@
 <Timeline
    version = "3.0">
    <TimelineItems>
+      <LoggerValueHistoryTimelineItem
+         documentLocation = "file:///Users/dmitriybaskakov/Documents/GitHub/ThreadTask/ThreadTask.playground#CharacterRangeLen=364&amp;CharacterRangeLoc=342&amp;EndingColumnNumber=9&amp;EndingLineNumber=27&amp;StartingColumnNumber=28&amp;StartingLineNumber=17&amp;Timestamp=681490564.967627"
+         lockedSize = "{272, 128}"
+         selectedRepresentationIndex = "0"
+         shouldTrackSuperviewWidth = "NO">
+      </LoggerValueHistoryTimelineItem>
    </TimelineItems>
 </Timeline>
